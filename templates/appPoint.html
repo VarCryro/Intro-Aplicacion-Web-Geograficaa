@@ -1,36 +1,101 @@
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registrar sitio</title>
-     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-
-     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-     crossorigin=""/>
-     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-     crossorigin=""></script>
-
-     <link rel="stylesheet" href="estilos.css">
+    <title>Agregar Nuevo Predio - Proyecto La Nueva Gloria</title>
+    
+    <!-- CSS de Bootstrap y Leaflet -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    
+    <!-- Estilo personalizado -->
+    <style>
+        body { background-color: #f8f9fa; }
+        #map { height: 550px; cursor: crosshair; border-radius: 8px; border: 1px solid #ddd; }
+        .form-container { background-color: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+    </style>
 </head>
 <body>
-     <div id="map"></div>
 
-     <div id="formulario">
-        <form action="">
-            <label for="nombre">Nombre del Propietario:</label> 
-            <input class="form-control" type="text" name="nombre" id="nombre">
-            <label for="estado">Estado del inmueble</label> 
-            <input class="form-control" type="text" name="estado" id="estado">
-            <label for="correo">Correo de contacto:</label>
-            <input class="form-control" type="text" name="correo" id="correo">
-            <label for="estrato">Estrato:</label>
-            <input class="form-control" type="text" name="estrato" id="estrato">
-            <button type="button">Aceptar</button>
-        </form>
-     </div>
-     <script src="programa.js"></script>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container">
+                <a class="navbar-brand" href="/index.html">Proyecto La Nueva Gloria</a>
+                <a href="index.html" class="btn btn-outline-light">Volver al Inicio</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container my-5">
+        <div class="text-center mb-4">
+            <h1>Agregar un Predio Problemático</h1>
+            <p class="lead">1. Haz clic en el mapa para marcar la ubicación.   |   2. Completa el formulario.</p>
+        </div>
+        
+        <div class="row g-4">
+            <!-- Columna del Mapa -->
+            <div class="col-lg-8">
+                <div id="map"></div>
+            </div>
+
+            <!-- Columna del Formulario -->
+            <div class="col-lg-4">
+                <div class="form-container">
+                    <h4>Detalles del Predio</h4>
+                    <hr>
+                    <form id="predioForm" action="/api/add_point" method="POST"> <!-- El 'action' y 'method' son importantes para el backend -->
+                        
+                        <!-- Campos de Coordenadas (se llenan con JS) -->
+                        <div class="mb-3">
+                            <label for="latitud" class="form-label">Latitud:</label>
+                            <input type="text" id="latitud" name="latitud" class="form-control" readonly required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="longitud" class="form-label">Longitud:</label>
+                            <input type="text" id="longitud" name="longitud" class="form-control" readonly required>
+                        </div>
+
+                        <!-- Tus Campos Específicos -->
+                        <div class="mb-3">
+                            <label for="nombre" class="form-label">Nombre del Propietario (Opcional):</label>
+                            <input type="text" id="nombre" name="nombre" class="form-control" placeholder="Ej: Juan Pérez o Desconocido">
+                        </div>
+
+                        <!-- Mejora: Usar un <select> para el estado -->
+                        <div class="mb-3">
+                            <label for="estado" class="form-label">Estado del Inmueble:</label>
+                            <select id="estado" name="estado" class="form-select" required>
+                                <option value="" disabled selected>Selecciona una opción...</option>
+                                <option value="Abandonado">Abandonado</option>
+                                <option value="En demolicion">En Demolición</option>
+                                <option value="En ruinas">En Ruinas</option>
+                                <option value="Lote vacio">Lote Vacío</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="correo" class="form-label">Correo de Contacto (Opcional):</label>
+                            <input type="email" id="correo" name="correo" class="form-control" placeholder="usuario@example.com">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="estrato" class="form-label">Estrato:</label>
+                            <input type="number" id="estrato" name="estrato" class="form-control" min="0" max="6" placeholder="Ej: 1" required>
+                        </div>
+
+                        <div class="d-grid">
+                           <button type="submit" class="btn btn-primary btn-lg">Guardar Predio</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Usa el script dedicado para esta página -->
+    <script src="/static/js/appPoint.js"></script> 
 </body>
 </html>

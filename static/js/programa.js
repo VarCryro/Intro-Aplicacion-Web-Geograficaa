@@ -1,20 +1,44 @@
-var map = L.map('map').setView([4.628039879669676, -74.06591030850961], 13);
-L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19,
-    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-}).addTo(map);
+// Contenido para: static/js/programa.js
 
-var circle = L.circle([4.628039879669676, -74.06591030850961], {
-    color: 'red',
-    fillColor: '#f03',
-    fillOpacity: 0.5,
-    radius: 200
-}).addTo(map);
+document.addEventListener('DOMContentLoaded', function () {
+    if (document.getElementById('map')) {
+        const tuCuadraLat = 4.541920221090718; 
+        const tuCuadraLng = -74.09174847415579;
+        
+        const map = L.map('map');
 
-// Manejar el evento de hacer click en el mapa
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19,
+          attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
 
-function onMapClick(e) {
-    var marker = L.marker(e.latlng).addTo(map);
-}
+        L.marker([tuCuadraLat, tuCuadraLng]).addTo(map)
+          .bindPopup('<b>¡Aquí está mi cuadra!</b>')
+          .openPopup();
 
-map.on('click', onMapClick);
+        var laNuevaGloriaCoordinates = [
+            [4.5449, -74.0939], [4.5450, -74.0930], [4.5445, -74.0922],
+            [4.5435, -74.0907], [4.5426, -74.0896], [4.5407, -74.0903],
+            [4.5408, -74.0913], [4.5413, -74.0923], [4.5423, -74.0937],
+            [4.5436, -74.0943]
+        ];
+
+        var barrioPoligono = L.polygon(laNuevaGloriaCoordinates, {
+            color: 'blue',
+            fillColor: '#3388ff',
+            fillOpacity: 0.4,
+            weight: 2
+        }).addTo(map);
+
+        barrioPoligono.bindPopup("<b>Barrio La Nueva Gloria / Miraflores</b>");
+        map.fitBounds(barrioPoligono.getBounds()); 
+    }
+    
+    function updateCopyrightYear() {
+        const yearSpan = document.getElementById('currentYear');
+        if (yearSpan) {
+            yearSpan.textContent = new Date().getFullYear();
+        }
+    }
+    updateCopyrightYear();
+});

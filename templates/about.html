@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acerca del Proyecto - La Nueva Gloria</title>
+    <link rel="stylesheet" href="estilos.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+     crossorigin=""/>
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <a href="index.html" class="logo">Proyecto La Nueva Gloria</a>
+            <ul>
+                <li><a href="index.html">Descripción</a></li>
+                <li><a href="about.html" class="active">Acerca del Proyecto</a></li>
+                <li><a href="author.html">Autor</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section id="project-intro">
+            <h1>Acerca del Proyecto</h1>
+            <p>Este proyecto se enfoca en investigar y documentar la problemática de inseguridad generada por las viviendas abandonadas y en estado de demolición incompleta en el barrio La Nueva Gloria, Bogotá D.C. El objetivo es proporcionar un análisis claro de la situación y sus consecuencias para la comunidad.</p>
+        </section>
+
+        <section id="objectives">
+            <h2>Objetivos Principales</h2>
+            <ul>
+                <li>Analizar cómo las estructuras abandonadas contribuyen a la inseguridad en La Nueva Gloria.</li>
+                <li>Evaluar el impacto de estos espacios en la percepción de seguridad de los residentes.</li>
+                <li>Identificar y mapear las zonas más críticas afectadas por esta problemática.</li>
+                <li>Recolectar testimonios y datos empíricos sobre incidentes de seguridad relacionados.</li>
+                <li>Proponer recomendaciones y posibles estrategias de mitigación basadas en los hallazgos.</li>
+            </ul>
+        </section>
+
+        <section id="problem-context">
+            <h2>Contexto de la Problemática</h2>
+            <p>Las viviendas desocupadas o a medio demoler pueden transformarse rápidamente en focos de actividades ilícitas, refugio para delincuentes, y generar un ambiente de deterioro urbano que afecta negativamente la calidad de vida de los vecinos. Este estudio busca profundizar en cómo esta dinámica se manifiesta específicamente en La Nueva Gloria durante los últimos años.</p>
+            <p>Se pretende entender no solo los aspectos físicos y delictivos, sino también el componente social y la respuesta de las autoridades frente a esta situación.</p>
+        </section>
+        
+        <!-- <section id="map-location-general">
+            <h2>Ubicación General del Barrio</h2>
+            <div id="map-about" style="height: 400px; width: 100%;"></div>
+        </section> -->
+
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© <span id="currentYearAbout"></span> Cristian Rodrigo Vanegas Gutiérrez. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+     crossorigin=""></script>
+    <script src="programa.js"></script>
+</body>
+</html>
