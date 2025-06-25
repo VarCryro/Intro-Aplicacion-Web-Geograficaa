@@ -1,14 +1,13 @@
-// Contenido para: static/js/appPoint.js
-
 document.addEventListener('DOMContentLoaded', function () {
-    // Referencias a los campos del formulario que se llenarán automáticamente
+    // --- REFERENCIAS A ELEMENTOS DEL DOM ---
     const latInput = document.getElementById('latitud');
     const lngInput = document.getElementById('longitud');
+    const formContainer = document.getElementById('form-container'); // Referencia al contenedor del formulario
+    const form = document.getElementById('predioForm');
 
-    // Centramos el mapa en la zona de La Nueva Gloria
+    // --- INICIALIZACIÓN DEL MAPA ---
     const map = L.map('map').setView([4.543, -74.091], 16);
 
-    // Capa de mapa de OpenStreetMap
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
         attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -16,23 +15,20 @@ document.addEventListener('DOMContentLoaded', function () {
 
     let marker; // Variable para guardar el marcador
 
-    // Función que se ejecuta al hacer clic en el mapa
+    // --- FUNCIÓN AL HACER CLIC EN EL MAPA ---
     function onMapClick(e) {
         const coords = e.latlng;
         
-        // Actualiza los valores en el formulario con 6 decimales de precisión
         latInput.value = coords.lat.toFixed(6);
         lngInput.value = coords.lng.toFixed(6);
 
-        // Si el marcador ya existe, mueve su posición. Si no, lo crea.
         if (marker) {
             marker.setLatLng(coords);
         } else {
             marker = L.marker(coords, {
-                draggable: true // Permite arrastrar el marcador para un ajuste fino
+                draggable: true // Tu excelente función de arrastrar
             }).addTo(map);
 
-            // Evento para actualizar las coordenadas si el marcador es arrastrado
             marker.on('dragend', function(event) {
                 const newCoords = event.target.getLatLng();
                 latInput.value = newCoords.lat.toFixed(6);
@@ -40,20 +36,24 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         }
         
-        // Muestra un pop-up en el marcador
         marker.bindPopup(`<b>Predio seleccionado</b><br>Arrastra para ajustar la posición.`).openPopup();
+
+        // --- LÓGICA DE INTERFAZ CORREGIDA ---
+        // 1. Muestra el contenedor del formulario que estaba oculto
+        if (formContainer.style.display === 'none') {
+            formContainer.style.display = 'block';
+        }
+
+        // 2. Desplázate suavemente hacia el formulario para que el usuario lo vea
+        formContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-    // Asocia la función onMapClick al evento 'click' del mapa
     map.on('click', onMapClick);
 
-    // (Opcional) Lógica para manejar el envío del formulario con JavaScript (Fetch API)
-    // Esto te da más control que un envío de formulario tradicional.
-    const form = document.getElementById('predioForm');
+    // --- MANEJO DEL ENVÍO DEL FORMULARIO (TU LÓGICA ORIGINAL MEJORADA) ---
     form.addEventListener('submit', function(event) {
-        event.preventDefault(); // Evita que la página se recargue
+        event.preventDefault(); 
 
-        // Validar que se haya seleccionado un punto
         if (!latInput.value || !lngInput.value) {
             alert('Por favor, haz clic en el mapa para seleccionar una ubicación.');
             return;
@@ -64,21 +64,22 @@ document.addEventListener('DOMContentLoaded', function () {
 
         console.log('Enviando datos:', data);
 
-        // Aquí envías los datos a tu backend (api.py)
         fetch('/api/add_point', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data),
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) throw new Error(`Error del servidor: ${response.status}`);
+            return response.json();
+        })
         .then(result => {
             console.log('Respuesta del servidor:', result);
-            alert(result.message); // Muestra mensaje de éxito o error del servidor
+            alert(result.message); 
             if (result.status === 'success') {
                 form.reset(); // Limpia el formulario
-                if(marker) {
+                formContainer.style.display = 'none'; // Oculta el formulario de nuevo
+                if (marker) {
                     map.removeLayer(marker); // Quita el marcador del mapa
                     marker = null;
                 }

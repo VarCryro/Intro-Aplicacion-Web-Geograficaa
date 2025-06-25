@@ -1,0 +1,75 @@
+/* Estilos para la página de "Agregar Predio" */
+
+body {
+    /* Mantenemos la consistencia con la fuente y el fondo del sitio */
+    font-family: 'Lato', sans-serif;
+    background-color: #f8f9fa;
+    color: #343a40;
+}
+
+/* --- Estilos del Header (para consistencia) --- */
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    font-weight: 700;
+}
+
+.navbar-logo {
+    height: 40px;
+    margin-right: 12px;
+}
+
+/* --- Estilos de la Sección Principal --- */
+.main-title h1 {
+    font-weight: 700;
+}
+
+.main-title .lead {
+    color: #6c757d; /* Un gris suave para el subtítulo */
+}
+
+/* --- ¡REGLA CLAVE PARA QUE EL MAPA SEA VISIBLE! --- */
+/* Le damos altura, borde y sombra para que se vea bien */
+#map { 
+    height: 500px; /* La altura es fundamental */
+    width: 100%;
+    cursor: crosshair; 
+    border-radius: 8px; 
+    border: 1px solid #dee2e6;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* --- Contenedor del Formulario --- */
+/* Esta regla la tenías como #formulario, la he cambiado a la clase .form-wrapper que usa el HTML */
+.form-wrapper { 
+    background-color: white; 
+    padding: 30px; 
+    border-radius: 8px; 
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
+    border: 1px solid #e9ecef;
+}
+
+.form-wrapper h4 {
+    font-weight: 700;
+}
+
+.form-label {
+    font-weight: 600; /* Etiquetas un poco más visibles */
+}
+
+/* --- Botón Principal --- */
+/* Usamos el color verde del logo para el botón de acción principal */
+.btn-primary {
+    background-color: #4a7d2a;
+    border-color: #4a7d2a;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.btn-primary:hover {
+    background-color: #3b6422;
+    border-color: #3b6422;
+}

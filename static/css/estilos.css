@@ -1,4 +1,67 @@
-#map { height: 500px; }
-#formulario{
-    height: 30%;
-    }
+/* Estilos Globales del Sitio */
+
+body {
+    font-family: 'Lato', sans-serif;
+    background-color: #f8f9fa; /* Fondo gris claro para contraste */
+    color: #343a40;
+    /* Permite que el footer se pegue abajo en páginas cortas */
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main {
+    flex-grow: 1; /* Hace que el contenido principal ocupe el espacio disponible */
+}
+
+/* --- Barra de Navegación y Logo (Compartido) --- */
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    font-weight: 700;
+}
+
+.navbar-logo {
+    height: 40px;
+    margin-right: 12px;
+}
+
+/* --- Estilos para páginas de contenido como "Acerca de" --- */
+.content-wrapper {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.075);
+    border: 1px solid #dee2e6;
+}
+
+.content-wrapper h1, 
+.content-wrapper h2 {
+    font-weight: 700;
+    color: #212529;
+}
+
+/* --- Estilos para listas de objetivos --- */
+.list-styled {
+    list-style: none; /* Quita los puntos por defecto */
+    padding-left: 0;
+}
+
+.list-styled li {
+    padding-left: 1.8em;
+    text-indent: -1.8em; /* Mantiene el texto alineado si ocupa varias líneas */
+    margin-bottom: 0.75rem; /* Espacio entre items */
+}
+
+.list-styled li::before {
+    content: "✔"; /* Puedes cambiarlo por "•", "➤", etc. */
+    color: #4a7d2a; /* Color verde de acento del logo */
+    font-weight: bold;
+    margin-right: 0.8em;
+}
+
+/* --- Pie de página (Compartido) --- */
+.footer {
+    background-color: #212529;
+}
+
+/* (Puedes agregar aquí otros estilos compartidos, como los de las tarjetas del index.html si es necesario) */
