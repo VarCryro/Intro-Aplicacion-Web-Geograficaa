@@ -2,19 +2,11 @@
 
 body {
     font-family: 'Lato', sans-serif;
-    background-color: #f8f9fa; /* Fondo gris claro para contraste */
+    background-color: #f8f9fa;
     color: #343a40;
-    /* Permite que el footer se pegue abajo en páginas cortas */
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
 }
 
-main {
-    flex-grow: 1; /* Hace que el contenido principal ocupe el espacio disponible */
-}
-
-/* --- Barra de Navegación y Logo (Compartido) --- */
+/* --- Barra de Navegación y Logo --- */
 .navbar-brand {
     display: flex;
     align-items: center;
@@ -26,42 +18,40 @@ main {
     margin-right: 12px;
 }
 
-/* --- Estilos para páginas de contenido como "Acerca de" --- */
-.content-wrapper {
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.075);
-    border: 1px solid #dee2e6;
+/* --- ¡REGLA CLAVE PARA QUE EL MAPA SEA VISIBLE! --- */
+#map { 
+    height: 450px; 
+    width: 100%; 
+    border-radius: 8px; 
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+        
+/* --- Botones --- */
+.btn-primary {
+    background-color: #4a7d2a;
+    border-color: #4a7d2a;
 }
 
-.content-wrapper h1, 
-.content-wrapper h2 {
-    font-weight: 700;
-    color: #212529;
+.btn-primary:hover {
+    background-color: #3b6422;
+    border-color: #3b6422;
 }
 
-/* --- Estilos para listas de objetivos --- */
-.list-styled {
-    list-style: none; /* Quita los puntos por defecto */
-    padding-left: 0;
+/* --- Tarjetas de Evidencia --- */
+.card-custom {
+    border: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    height: 100%;
 }
 
-.list-styled li {
-    padding-left: 1.8em;
-    text-indent: -1.8em; /* Mantiene el texto alineado si ocupa varias líneas */
-    margin-bottom: 0.75rem; /* Espacio entre items */
+.card-custom:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
 }
 
-.list-styled li::before {
-    content: "✔"; /* Puedes cambiarlo por "•", "➤", etc. */
-    color: #4a7d2a; /* Color verde de acento del logo */
-    font-weight: bold;
-    margin-right: 0.8em;
-}
-
-/* --- Pie de página (Compartido) --- */
+/* --- Pie de página --- */
 .footer {
     background-color: #212529;
 }
-
-/* (Puedes agregar aquí otros estilos compartidos, como los de las tarjetas del index.html si es necesario) */
