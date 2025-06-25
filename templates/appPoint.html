@@ -11,9 +11,28 @@
     
     <!-- Estilo personalizado -->
     <style>
-        body { background-color: #f8f9fa; }
-        #map { height: 550px; cursor: crosshair; border-radius: 8px; border: 1px solid #ddd; }
-        .form-container { background-color: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        body { 
+            background-color: #f8f9fa; 
+        }
+        .navbar-brand {
+            font-weight: bold;
+        }
+        /* El mapa ocupará todo el ancho y tendrá una altura fija */
+        #map { 
+            height: 500px; 
+            width: 100%;
+            cursor: crosshair; 
+            border-radius: 8px; 
+            border: 1px solid #ddd;
+            margin-bottom: 1.5rem; /* Espacio entre el mapa y el formulario */
+        }
+        /* Estilo para el contenedor del formulario */
+        .form-wrapper { 
+            background-color: white; 
+            padding: 25px; 
+            border-radius: 8px; 
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1); 
+        }
     </style>
 </head>
 <body>
@@ -21,7 +40,7 @@
     <header>
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <div class="container">
-                <a class="navbar-brand" href="/index.html">Proyecto La Nueva Gloria</a>
+                <a class="navbar-brand" href="#">Proyecto La Nueva Gloria</a>
                 <a href="index.html" class="btn btn-outline-light">Volver al Inicio</a>
             </div>
         </nav>
@@ -29,73 +48,100 @@
 
     <main class="container my-5">
         <div class="text-center mb-4">
-            <h1>Agregar un Predio Problemático</h1>
-            <p class="lead">1. Haz clic en el mapa para marcar la ubicación.   |   2. Completa el formulario.</p>
+            <h1>Agregar un Predio</h1>
+            <p class="lead">1. Haz clic en el mapa para seleccionar la ubicación y revelar el formulario.</p>
         </div>
         
-        <div class="row g-4">
-            <!-- Columna del Mapa -->
-            <div class="col-lg-8">
-                <div id="map"></div>
-            </div>
+        <!-- Contenedor del Mapa (siempre visible) -->
+        <div id="map"></div>
 
-            <!-- Columna del Formulario -->
-            <div class="col-lg-4">
-                <div class="form-container">
-                    <h4>Detalles del Predio</h4>
-                    <hr>
-                    <form id="predioForm" action="/api/add_point" method="POST"> <!-- El 'action' y 'method' son importantes para el backend -->
-                        
-                        <!-- Campos de Coordenadas (se llenan con JS) -->
-                        <div class="mb-3">
-                            <label for="latitud" class="form-label">Latitud:</label>
-                            <input type="text" id="latitud" name="latitud" class="form-control" readonly required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="longitud" class="form-label">Longitud:</label>
-                            <input type="text" id="longitud" name="longitud" class="form-control" readonly required>
-                        </div>
+        <!-- Contenedor del Formulario (inicialmente oculto) -->
+        <div id="form-container" class="form-wrapper" style="display: none;">
+            <h4>Detalles del Predio Seleccionado</h4>
+            <hr>
+            <form id="predioForm" action="/api/add_point" method="POST">
+                
+                <!-- Campos ocultos para las coordenadas. Se llenan con JavaScript -->
+                <input type="hidden" id="latitud" name="latitud" required>
+                <input type="hidden" id="longitud" name="longitud" required>
 
-                        <!-- Tus Campos Específicos -->
-                        <div class="mb-3">
-                            <label for="nombre" class="form-label">Nombre del Propietario (Opcional):</label>
-                            <input type="text" id="nombre" name="nombre" class="form-control" placeholder="Ej: Juan Pérez o Desconocido">
-                        </div>
-
-                        <!-- Mejora: Usar un <select> para el estado -->
-                        <div class="mb-3">
-                            <label for="estado" class="form-label">Estado del Inmueble:</label>
-                            <select id="estado" name="estado" class="form-select" required>
-                                <option value="" disabled selected>Selecciona una opción...</option>
-                                <option value="Abandonado">Abandonado</option>
-                                <option value="En demolicion">En Demolición</option>
-                                <option value="En ruinas">En Ruinas</option>
-                                <option value="Lote vacio">Lote Vacío</option>
-                            </select>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="correo" class="form-label">Correo de Contacto (Opcional):</label>
-                            <input type="email" id="correo" name="correo" class="form-control" placeholder="usuario@example.com">
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="estrato" class="form-label">Estrato:</label>
-                            <input type="number" id="estrato" name="estrato" class="form-control" min="0" max="6" placeholder="Ej: 1" required>
-                        </div>
-
-                        <div class="d-grid">
-                           <button type="submit" class="btn btn-primary btn-lg">Guardar Predio</button>
-                        </div>
-                    </form>
+                <!-- Nuevos Campos del Formulario -->
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="nupren" class="form-label">NUPRE (Opcional):</label>
+                        <input type="text" id="nupren" name="nupren" class="form-control" placeholder="Número Único de Predio Registral">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="nombre" class="form-label">Nombre del Predio (Opcional):</label>
+                        <input type="text" id="nombre" name="nombre" class="form-control" placeholder="Ej: Lote La Esperanza">
+                    </div>
+                    <div class="col-12">
+                        <label for="direccion" class="form-label">Dirección:</label>
+                        <input type="text" id="direccion" name="direccion" class="form-control" placeholder="Ej: Calle 10 # 20-30" required>
+                    </div>
+                     <div class="col-md-6">
+                        <label for="estado" class="form-label">Estado (del 1 al 10):</label>
+                        <input type="number" id="estado" name="estado" class="form-control" min="1" max="10" placeholder="1" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="propietario" class="form-label">Propietario (Opcional):</label>
+                        <input type="text" id="propietario" name="propietario" class="form-control" placeholder="Ej: Juan Pérez o Desconocido">
+                    </div>
                 </div>
-            </div>
+
+                <div class="d-grid mt-4">
+                   <button type="submit" class="btn btn-primary btn-lg">Guardar Predio</button>
+                </div>
+            </form>
         </div>
     </main>
     
+    <!-- Scripts de Leaflet y Bootstrap -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Usa el script dedicado para esta página -->
-    <script src="/static/js/appPoint.js"></script> 
+    
+    <!-- JavaScript para la lógica del mapa y formulario -->
+    <script>
+
+        const centroDelBarrio = [4.543, -74.091]; 
+        const zoomInicial = 16;
+
+        // 1. Inicializar el mapa
+        const map = L.map('map').setView(centroDelBarrio, zoomInicial); 
+
+        // Añadir una capa de OpenStreetMap (el mapa base)
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // 2. Variables para el marcador y elementos del formulario
+        let marker;
+        const formContainer = document.getElementById('form-container');
+        const latitudInput = document.getElementById('latitud');
+        const longitudInput = document.getElementById('longitud');
+
+        // 3. Función que se ejecuta al hacer clic en el mapa
+        map.on('click', function(e) {
+            const coords = e.latlng;
+
+            // Actualizar los campos ocultos del formulario con las coordenadas
+            latitudInput.value = coords.lat.toFixed(6); // Limitar a 6 decimales
+            longitudInput.value = coords.lng.toFixed(6);
+
+            // Si no hay un marcador, créalo. Si ya existe, simplemente mueve su posición.
+            if (marker) {
+                marker.setLatLng(coords);
+            } else {
+                marker = L.marker(coords).addTo(map)
+                    .bindPopup('Ubicación seleccionada').openPopup();
+            }
+
+            // Muestra el contenedor del formulario que estaba oculto
+            formContainer.style.display = 'block';
+
+            // Opcional: Desplázate hacia el formulario para que sea visible en pantallas pequeñas
+            formContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    </script> 
 </body>
 </html>
