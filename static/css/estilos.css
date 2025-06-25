@@ -1,9 +1,20 @@
-/* Estilos Globales del Sitio */
+/* ==========================================================================
+   ESTILOS GENERALES Y COMPONENTES COMPARTIDOS
+   ========================================================================== */
 
+/* --- Estilos Globales del Sitio --- */
 body {
     font-family: 'Lato', sans-serif;
-    background-color: #f8f9fa;
+    background-color: #f8f9fa; /* Fondo gris claro para contraste */
     color: #343a40;
+    /* Permite que el footer se pegue abajo en páginas cortas */
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main {
+    flex-grow: 1; /* Hace que el contenido principal ocupe el espacio disponible */
 }
 
 /* --- Barra de Navegación y Logo --- */
@@ -18,7 +29,29 @@ body {
     margin-right: 12px;
 }
 
-/* --- ¡REGLA CLAVE PARA QUE EL MAPA SEA VISIBLE! --- */
+/* --- Botones --- */
+.btn-primary {
+    background-color: #4a7d2a;
+    border-color: #4a7d2a;
+}
+
+.btn-primary:hover {
+    background-color: #3b6422;
+    border-color: #3b6422;
+}
+
+/* --- Pie de página --- */
+.footer {
+    background-color: #212529;
+}
+
+/* ==========================================================================
+   ESTILOS ESPECÍFICOS POR PÁGINA
+   ========================================================================== */
+
+/* --- Estilos para la Página Principal (index.html) --- */
+
+/* Mapa del index */
 #map { 
     height: 450px; 
     width: 100%; 
@@ -27,18 +60,7 @@ body {
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
         
-/* --- Botones --- */
-.btn-primary {
-    background-color: #4a7d2a;
-    border-color: #4a7d2a;
-}
-
--.btn-primary:hover {
-    background-color: #3b6422;
-    border-color: #3b6422;
-}
-
-/* --- Tarjetas de Evidencia --- */
+/* Tarjetas de Evidencia del index */
 .card-custom {
     border: none;
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
@@ -51,7 +73,109 @@ body {
     box-shadow: 0 8px 20px rgba(0,0,0,0.15);
 }
 
-/* --- Pie de página --- */
-.footer {
-    background-color: #212529;
+/* --- Estilos para la Página "Acerca de" (about.html) --- */
+
+/* Contenedor blanco para el texto */
+.content-wrapper {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.075);
+    padding: 2.5rem;
+    border: 1px solid #dee2e6;
+}
+
+.content-wrapper h1, 
+.content-wrapper h2 {
+    font-weight: 700;
+    color: #212529;
+}
+
+/* Lista de objetivos personalizada */
+.list-styled {
+    list-style: none;
+    padding-left: 0;
+}
+
+.list-styled li {
+    padding-left: 1.8em;
+    text-indent: -1.8em;
+    margin-bottom: 0.75rem;
+}
+
+.list-styled li::before {
+    content: "✔";
+    color: #4a7d2a;
+    font-weight: bold;
+    margin-right: 0.8em;
+}
+
+/* --- Estilos para la Página de Autor (author.html) --- */
+
+.author-card {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    background-color: white;
+    padding: 2.5rem;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    max-width: 800px;
+    border: 1px solid #e9ecef;
+}
+
+.author-photo img {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 5px solid #f8f9fa;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.author-info h2 {
+    font-weight: 700;
+    margin-top: 0;
+    color: #212529;
+}
+
+.author-contact-list {
+    list-style: none;
+    padding-left: 0;
+    margin-top: 1.5rem;
+    margin-bottom: 0;
+}
+
+.author-contact-list li {
+    margin-bottom: 0.8rem;
+}
+
+.author-contact-list a {
+    text-decoration: none;
+    color: #495057;
+    transition: color 0.2s ease-in-out;
+}
+
+.author-contact-list a:hover {
+    color: #4a7d2a;
+}
+
+.author-contact-list i {
+    font-size: 1.3rem;
+    margin-right: 1rem;
+    width: 28px;
+    text-align: center;
+    color: #4a7d2a;
+}
+
+/* --- Responsive para pantallas pequeñas (Autor) --- */
+@media (max-width: 768px) {
+    .author-card {
+        flex-direction: column;
+        text-align: center;
+        padding: 2rem;
+    }
+
+    .author-contact-list li a {
+        justify-content: center;
+    }
 }
