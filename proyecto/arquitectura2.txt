@@ -1,17 +1,38 @@
-+---------------------------------+
-|         USUARIO (Navegador)     |
-|   (HTML, CSS, JavaScript)       |
-|   (Leaflet.js para el mapa)     |
-+---------------------------------+
-             | (Peticiones a la API: GET /predios, POST /add_point)
-             v
-+---------------------------------+
-|         BACKEND (Servidor)      |
-|   (Flask + SQLAlchemy ORM)      |
-+---------------------------------+
-             | (Consultas SQL a través del ORM)
-             v
-+---------------------------------+
-|   BASE DE DATOS (Servidor BD)   |
-|   (PostgreSQL + Extensión PostGIS) |
-+---------------------------------+
++-----------------------------------------------------------------+
+| Capa 1: PRESENTACIÓN (Cliente - Navegador Web)                  |
+|                                                                 |
+|   [ HTML ]   [ CSS ]   [ JavaScript ]   [ Leaflet.js ]          |
+|   (Renderiza la interfaz, el mapa y los marcadores)             |
+|   (Captura la entrada del usuario y envía peticiones a la API)  |
++-----------------------------------------------------------------+
+                          ^
+                          | (API RESTful - HTTP/JSON)
+                          v
++-----------------------------------------------------------------+
+| Capa 2: NEGOCIO / APLICACIÓN (Servidor Backend)                 |
+|                                                                 |
+|   [ Flask ]                                                     |
+|   (Gestiona las rutas y peticiones: /api/add_point, /api/predios)|
+|   (Valida los datos de entrada)                                 |
+|   (Orquesta la lógica para crear o leer predios)                |
++-----------------------------------------------------------------+
+                          ^
+                          | (Llamadas a través del ORM)
+                          v
++-----------------------------------------------------------------+
+| Capa 3: PERSISTENCIA / ACCESO A DATOS (ORM)                     |
+|                                                                 |
+|   [ SQLAlchemy ORM ]   [ GeoAlchemy2 ]                          |
+|   (Mapea objetos Python (clase Predio) a tablas de la BD)       |
+|   (Traduce las llamadas de la capa de negocio a consultas SQL)  |
++-----------------------------------------------------------------+
+                          ^
+                          | (Consultas SQL)
+                          v
++-----------------------------------------------------------------+
+| Capa 4: BASE DE DATOS (Sistema de Almacenamiento)               |
+|                                                                 |
+|   [ PostgreSQL Server ]   [ Extensión PostGIS ]                 |
+|   (Almacena los datos de forma segura y persistente)            |
+|   (Ejecuta las consultas SQL y las funciones geoespaciales)     |
++-----------------------------------------------------------------+
