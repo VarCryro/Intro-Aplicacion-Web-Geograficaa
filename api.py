@@ -1,73 +1,78 @@
-# Importamos las librerías necesarias
-from flask import Flask
+import json
+from flask import (
+    Flask, render_template, request,
+    jsonify
+)
 from flask_sqlalchemy import SQLAlchemy
-# ¡Importante! Importamos el tipo 'Geometry' de GeoAlchemy2
-# Este es el encargado de manejar los tipos de datos geoespaciales.
-from geoalchemy2.types import Geometry
+from geoalchemy2 import Geometry
+from geoalchemy2.shape import from_shape
+from shapely.geometry import Point
+from sqlalchemy import func, exc
 
-# --- Configuración de la aplicación Flask (Ejemplo) ---
-# En una aplicación real, esto estaría en tu archivo principal (app.py)
+# --- CONFIGURACIÓN DE LA APLICACIÓN ---
 app = Flask(__name__)
 
-# Configuración de la base de datos PostgreSQL.
-# ¡RECUERDA CAMBIAR ESTO por tus datos reales!
-# Formato: 'postgresql://usuario:contraseña@host:puerto/nombre_base_de_datos'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:tu_contraseña@localhost/tu_basedatos'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# LA LÍNEA CRÍTICA - ASEGÚRATE DE QUE LA TUYA SEA IDÉNTICA Y ESCRITA A MANO
+app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://geo_user:loki0919@localhost:5432/nuevagloria"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-# Inicializamos la extensión SQLAlchemy, que ahora será "consciente"
-# de los tipos de datos de GeoAlchemy2.
 db = SQLAlchemy(app)
-# --- Fin de la configuración ---
 
-
-# Definición del Modelo 'Predio'
+# --- MODELO DE LA BASE DE DATOS ---
 class Predio(db.Model):
-    """
-    Modelo de la tabla 'predio'.
-    Cada atributo de la clase representa una columna de la tabla.
-    """
-    # __tablename__ le dice a SQLAlchemy el nombre exacto de la tabla en la BD.
-    __tablename__ = 'predio'
+    __tablename__ = "predio"
+    id          = db.Column(db.Integer, primary_key=True)
+    nupren      = db.Column(db.String(30))
+    nombre      = db.Column(db.String(100))
+    direccion   = db.Column(db.String(100), nullable=False)
+    estado      = db.Column(db.Integer)
+    propietario = db.Column(db.String(100))
+    localizacion = db.Column(Geometry("POINT", srid=4326), nullable=False)
 
-    # id: Llave primaria, tipo entero.
-    # primary_key=True lo marca como llave primaria y lo hace autoincremental por defecto,
-    # gestionando el 'nextval' de PostgreSQL automáticamente.
-    id = db.Column(db.Integer, primary_key=True)
+# --- RUTAS ---
+@app.route("/")
+def index(): return render_template("index.html")
+@app.route("/appPoint.html")
+def app_point(): return render_template("appPoint.html")
+# (Aquí van tus otras rutas HTML)
 
-    # nombre: Cadena de texto (varchar) de hasta 100 caracteres, no puede ser nulo.
-    nombre = db.Column(db.String(100), nullable=False)
+# --- API ---
+@app.route("/api/add_point", methods=["POST"])
+def add_point():
+    try:
+        data = request.get_json(force=True) # Usamos force=True como último seguro
+        
+        if not all(k in data and data[k] for k in ["direccion", "estado", "latitud", "longitud"]):
+            return jsonify(status="error", message="Faltan campos obligatorios."), 400
 
-    # -----------------------------------------------------------------
-    # localizacion: ¡La columna especial de tipo 'point'!
-    # Usamos el tipo 'Geometry' que importamos de GeoAlchemy2.
-    # 1. Geometry: El tipo de dato general para datos espaciales.
-    # 2. geometry_type='POINT': Le especificamos que, dentro de las geometrías,
-    #    esta columna almacenará específicamente un 'POINT' (Punto).
-    # 3. srid=4326 (Opcional pero muy recomendado): El SRID es el "Identificador de
-    #    Referencia Espacial". 4326 es el estándar mundial para coordenadas de
-    #    latitud/longitud (WGS 84). Usarlo asegura la consistencia.
-    # 4. nullable=False: La localización es obligatoria.
-    localizacion = db.Column(Geometry(geometry_type='POINT', srid=4326), nullable=False)
-    # -----------------------------------------------------------------
+        nuevo = Predio(
+            nupren=data.get("nupren"), nombre=data.get("nombre"),
+            direccion=data["direccion"], estado=int(data["estado"]),
+            propietario=data.get("propietario"),
+            localizacion=from_shape(Point(float(data["longitud"]), float(data["latitud"])), srid=4326),
+        )
+        db.session.add(nuevo)
+        db.session.commit()
+        return jsonify(status="success", message="¡Predio guardado con éxito!"), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify(status="error", message=f"Error inesperado al guardar: {e}"), 500
 
-    # direccion: Cadena de texto de hasta 100 caracteres, no puede ser nulo.
-    direccion = db.Column(db.String(100), nullable=False)
+@app.route("/api/predios")
+def predios():
+    try:
+        rows = db.session.query(Predio.id, Predio.nombre, Predio.estado, func.ST_AsGeoJSON(Predio.localizacion).label("geom")).all()
+        features = [
+            {"type": "Feature", "geometry": json.loads(r.geom), "properties": {"id": r.id, "nombre": r.nombre, "estado": r.estado}}
+            for r in rows if r.geom
+        ]
+        return jsonify({"type": "FeatureCollection", "features": features})
+    except Exception as e:
+        print(f"ERROR en /api/predios: {e}")
+        return jsonify(status="error", message="Error interno al obtener los predios."), 500
 
-    # estado: Entero, puede ser nulo (nullable=True por defecto).
-    estado = db.Column(db.Integer)
-
-    # celular: Entero, puede ser nulo.
-    # Nota: Es común guardar teléfonos como String para manejar prefijos '+' o ceros.
-    # Pero aquí nos ceñimos a tu script SQL.
-    celular = db.Column(db.Integer)
-
-    # nupre: Cadena de texto de hasta 30 caracteres, no puede ser nulo.
-    nupre = db.Column(db.String(30), nullable=False)
-
-    # El método __repr__ es para que, cuando imprimas un objeto Predio,
-    # veas algo útil y legible. ¡Ideal para depurar!
-    def __repr__(self):
-        # Cuando consultemos un predio, su localización se mostrará en un formato
-        # llamado WKT (Well-Known Text), ej: 'POINT (-74.072 4.711)'
-        return f"<Predio id={self.id} nombre='{self.nombre}' localizacion='{self.localizacion}'>"
+# --- EJECUCIÓN ---
+if __name__ == "__main__":
+    with app.app_context():
+        db.create_all()
+    app.run(debug=True)

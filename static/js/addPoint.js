@@ -1,93 +1,88 @@
 document.addEventListener('DOMContentLoaded', function () {
-    // --- REFERENCIAS A ELEMENTOS DEL DOM ---
-    const latInput = document.getElementById('latitud');
-    const lngInput = document.getElementById('longitud');
-    const formContainer = document.getElementById('form-container'); // Referencia al contenedor del formulario
-    const form = document.getElementById('predioForm');
+  // --- REFERENCIAS DEL DOM ---
+  const form = document.getElementById('formPredio');
+  const saveBtn = document.getElementById('saveBtn');
+  const latInput = document.querySelector('input[name="latitud"]');
+  const lngInput = document.querySelector('input[name="longitud"]');
+  const predioModal = new bootstrap.Modal(document.getElementById('predioModal'));
 
-    // --- INICIALIZACIÓN DEL MAPA ---
-    const map = L.map('map').setView([4.543, -74.091], 16);
+  // --- MAPA ---
+  const map = L.map('map').setView([4.541887730694171, -74.09165321850323], 17); // Coordenadas para La Nueva Gloria
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '© OpenStreetMap contributors'
+  }).addTo(map);
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(map);
+  let tempMarker = null; // Marcador temporal
 
-    let marker; // Variable para guardar el marcador
+  // --- LÓGICA DE CLIC EN EL MAPA ---
+  map.on('click', (e) => {
+    const { lat, lng } = e.latlng;
 
-    // --- FUNCIÓN AL HACER CLIC EN EL MAPA ---
-    function onMapClick(e) {
-        const coords = e.latlng;
-        
-        latInput.value = coords.lat.toFixed(6);
-        lngInput.value = coords.lng.toFixed(6);
+    if (tempMarker) {
+      map.removeLayer(tempMarker);
+    }
+    tempMarker = L.marker([lat, lng]).addTo(map);
 
-        if (marker) {
-            marker.setLatLng(coords);
-        } else {
-            marker = L.marker(coords, {
-                draggable: true // Tu excelente función de arrastrar
-            }).addTo(map);
+    latInput.value = lat;
+    lngInput.value = lng;
+    predioModal.show();
+  });
 
-            marker.on('dragend', function(event) {
-                const newCoords = event.target.getLatLng();
-                latInput.value = newCoords.lat.toFixed(6);
-                lngInput.value = newCoords.lng.toFixed(6);
-            });
-        }
-        
-        marker.bindPopup(`<b>Predio seleccionado</b><br>Arrastra para ajustar la posición.`).openPopup();
+  // --- ENVÍO DEL FORMULARIO (VERSIÓN MEJORADA) ---
+  saveBtn.addEventListener('click', async (evt) => {
+    evt.preventDefault(); // Prevenimos el envío tradicional
 
-        // --- LÓGICA DE INTERFAZ CORREGIDA ---
-        // 1. Muestra el contenedor del formulario que estaba oculto
-        if (formContainer.style.display === 'none') {
-            formContainer.style.display = 'block';
-        }
-
-        // 2. Desplázate suavemente hacia el formulario para que el usuario lo vea
-        formContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (!latInput.value || !lngInput.value) {
+      alert('Error: No se ha seleccionado una ubicación en el mapa.');
+      return;
     }
 
-    map.on('click', onMapClick);
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
 
-    // --- MANEJO DEL ENVÍO DEL FORMULARIO (TU LÓGICA ORIGINAL MEJORADA) ---
-    form.addEventListener('submit', function(event) {
-        event.preventDefault(); 
+    // Validación simple en el frontend para dar feedback inmediato
+    if (!data.direccion || !data.estado) {
+      alert("Por favor, rellena los campos 'Dirección' y 'Estado'. Son obligatorios.");
+      return;
+    }
 
-        if (!latInput.value || !lngInput.value) {
-            alert('Por favor, haz clic en el mapa para seleccionar una ubicación.');
-            return;
+    try {
+      const res = await fetch('/api/add_point', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      
+      // Leemos la respuesta del servidor sea cual sea el resultado
+      const json = await res.json();
+      
+      if (res.ok) {
+        // Si todo fue bien (código 2xx)
+        alert(json.message || 'Predio guardado con éxito');
+        predioModal.hide();
+        form.reset(); 
+        if (tempMarker) {
+          map.removeLayer(tempMarker);
+          tempMarker = null;
         }
+      } else {
+        // Si el servidor devolvió un error (código 4xx o 5xx)
+        // MOSTRAMOS EL MENSAJE DE ERROR REAL DEL SERVIDOR
+        alert('Error al guardar: ' + (json.message || 'Error desconocido.'));
+      }
 
-        const formData = new FormData(form);
-        const data = Object.fromEntries(formData.entries());
+    } catch (err) {
+      console.error('Error de conexión:', err);
+      alert('Error al conectar con el servidor.');
+    }
+  });
 
-        console.log('Enviando datos:', data);
-
-        fetch('/api/add_point', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data),
-        })
-        .then(response => {
-            if (!response.ok) throw new Error(`Error del servidor: ${response.status}`);
-            return response.json();
-        })
-        .then(result => {
-            console.log('Respuesta del servidor:', result);
-            alert(result.message); 
-            if (result.status === 'success') {
-                form.reset(); // Limpia el formulario
-                formContainer.style.display = 'none'; // Oculta el formulario de nuevo
-                if (marker) {
-                    map.removeLayer(marker); // Quita el marcador del mapa
-                    marker = null;
-                }
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Ocurrió un error al enviar los datos.');
-        });
-    });
+  // Limpiar el marcador si el usuario cierra el modal sin guardar
+  document.getElementById('predioModal').addEventListener('hidden.bs.modal', () => {
+    if (tempMarker) {
+      map.removeLayer(tempMarker);
+      tempMarker = null;
+    }
+  });
 });

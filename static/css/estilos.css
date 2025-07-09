@@ -179,3 +179,11 @@ main {
         justify-content: center;
     }
 }
+
+/* Mapa con altura razonable para no tapar todo el sitio */
+#map {
+  height: 450px;       /* cambia según necesidad */
+  width: 100%;
+  border: 2px solid #0d6efd;
+  border-radius: 0.5rem;
+}
