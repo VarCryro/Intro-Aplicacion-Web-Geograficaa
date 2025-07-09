@@ -1,0 +1,4 @@
+Mostrar un mapa interactivo de la zona.
+Permitir a un usuario agregar un nuevo punto problemático con su ubicación y datos.
+Guardar estos datos de forma persistente.
+Visualizar todos los puntos guardados en el mapa principal.
