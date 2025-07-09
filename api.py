@@ -12,8 +12,8 @@ from sqlalchemy import func, exc
 # --- CONFIGURACIÓN DE LA APLICACIÓN ---
 app = Flask(__name__)
 
-# LA LÍNEA CRÍTICA - ASEGÚRATE DE QUE LA TUYA SEA IDÉNTICA Y ESCRITA A MANO
-app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://geo_user:loki0919@localhost:5432/nuevagloria"
+# USA LOS DATOS NUEVOS QUE CREASTE
+app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://gloria_user:gloria_pass_123@localhost:5432/gloria_db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db = SQLAlchemy(app)
