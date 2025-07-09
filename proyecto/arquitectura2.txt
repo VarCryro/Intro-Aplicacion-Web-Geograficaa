@@ -1,0 +1,17 @@
++---------------------------------+
+|         USUARIO (Navegador)     |
+|   (HTML, CSS, JavaScript)       |
+|   (Leaflet.js para el mapa)     |
++---------------------------------+
+             | (Peticiones a la API: GET /predios, POST /add_point)
+             v
++---------------------------------+
+|         BACKEND (Servidor)      |
+|   (Flask + SQLAlchemy ORM)      |
++---------------------------------+
+             | (Consultas SQL a través del ORM)
+             v
++---------------------------------+
+|   BASE DE DATOS (Servidor BD)   |
+|   (PostgreSQL + Extensión PostGIS) |
++---------------------------------+
